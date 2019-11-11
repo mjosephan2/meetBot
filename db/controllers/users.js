@@ -1,7 +1,7 @@
 var common = require("./common");
 var express = require("express");
 var init = require('./init')
-var cfg = require('../config/development.json');
+var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 exports.getUser = function (req, res, next) {
@@ -22,7 +22,7 @@ exports.postUser = function(req,res, next){
     const userdet = req.body
     console.log(userdet)
     // userdet = {user_id="sadfaf", username="name"}
-    common.insertGenericData('users', cfg.db_details.users_table, userdet)
+    common.insertGenericData('users', SQLconfig.users_table, userdet)
     .then(function(data){
         res.status(200).send(data)
     })
@@ -36,5 +36,5 @@ exports.test = function(req,res,next){
     res.status(200).send("Hello")
 }
 var _getData = function (params, cond) {
-    return common.getGenericData('Users', cfg.db_details.users_table, params, cond);
+    return common.getGenericData('Users', SQLconfig.users_table, params, cond);
 };

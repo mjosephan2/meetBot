@@ -1,7 +1,7 @@
 var common = require("./common");
 var express = require("express");
 var init = require('./init')
-var cfg = require('../config/development.json');
+var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 exports.getEvents = function (req, res, next) {
@@ -22,7 +22,7 @@ exports.getEvents = function (req, res, next) {
 exports.postEvents = function(req,res, next){
     const eventdet = req.body
     console.log(eventdet)
-    common.insertGenericData('Events', cfg.db_details.events_table, eventdet)
+    common.insertGenericData('Events', SQLconfig.events_table, eventdet)
     .then(function(data){
         res.status(200).send(data)
     })
@@ -48,5 +48,5 @@ exports.putUpdateEvents = function(req,res,next){
     })
 }
 var _getData = function (params, cond) {
-    return common.getGenericData('Events', cfg.db_details.events_table, params, cond);
+    return common.getGenericData('Events', SQLconfig.events_table, params, cond);
 };

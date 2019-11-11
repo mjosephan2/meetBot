@@ -1,7 +1,7 @@
 var common = require('./common')
 var init = require('./init')
 var express = require('express')
-var cfg = require('../config/development.json');
+var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 
@@ -53,5 +53,5 @@ exports.putUpdateInvitees = function(req,res,next){
     })
 }
 var _getData = function (params, cond) {
-    return common.getGenericData('invitees', cfg.db_details.invitees_table, params, cond);
+    return common.getGenericData('invitees', SQLconfig.invitees_table, params, cond);
 };

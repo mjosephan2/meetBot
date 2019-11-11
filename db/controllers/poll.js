@@ -1,7 +1,7 @@
 var common = require("./common");
 var express = require("express");
 var init = require('./init')
-var cfg = require('../config/development.json');
+var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 
@@ -29,9 +29,9 @@ exports.postInsertPolls = function(req,res,next){
     })
 }
 const _getPollData = function (params, cond) {
-    return common.getGenericData('Poll', cfg.db_details.poll_table, params, cond);
+    return common.getGenericData('Poll', SQLconfig.poll_table, params, cond);
 };
 
 const _getPollDateData = function (params, cond) {
-    return common.getGenericData('Poll Date', cfg.db_details.poll_date_table, params, cond);
+    return common.getGenericData('Poll Date', SQLconfig.poll_date_table, params, cond);
 };

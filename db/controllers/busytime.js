@@ -1,7 +1,7 @@
 var common = require('./common')
 var init = require('./init')
 var express = require('express')
-var cfg = require('../config/development.json');
+var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 
@@ -36,5 +36,5 @@ exports.postBusyTime = function(req,res,next){
     })
 }
 var _getData = function (params, cond) {
-    return common.getGenericData('busytime', cfg.db_details.busy_table, params, cond);
+    return common.getGenericData('busytime', SQLconfig.busy_table, params, cond);
 };
