@@ -18,4 +18,4 @@ exports.SQLconfig = {
     poll_date_table : "poll_date",
 }
 
-exports.config = Config;
+exports.config = DevConfig;

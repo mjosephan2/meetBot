@@ -15,7 +15,7 @@ const invitees = require('./controllers/invitees');
 const poll = require('./controllers/poll');
 // initialization
 const app = express();
-const port = 3000;
+const port = process.env.port || 3000;
 
 // engine
 app.use(bodyParser.urlencoded({ extended: true }))
