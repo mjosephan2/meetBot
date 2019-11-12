@@ -1,4 +1,3 @@
-
 var Config = {
         host: process.env.SQL_HOST,
         port: "3306",

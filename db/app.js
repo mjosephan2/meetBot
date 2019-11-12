@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const Joi = require('joi');
+require('dotenv').config();
 /*
     400 = Bad Request
     200 = Okay
@@ -51,5 +52,4 @@ app.use("/poll",poll.router);
 
 app.listen(port,()=>{
     console.log(`listening to ${port}`)
-    console.log(process.env)
 })

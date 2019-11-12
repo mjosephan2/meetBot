@@ -131,3 +131,6 @@ yarn.lock
 
 # ignore config
 config/development.json
+
+# ignore yaml
+*.yaml
