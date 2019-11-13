@@ -32,6 +32,21 @@ exports.postUser = function(req,res, next){
         res.status(404).send(JSON.stringify({error:err.sqlMessage}))
     })
 }
+
+exports.getAllUserExcept = function(req,res,next){
+    var cond = "user_id != '" + req.params.user_id + "'";
+    console.log(cond)
+    _getData("*", cond)
+        .then(function (data) {
+        res.status(200).send(data);
+    })
+        .catch((err)=> {
+        console.log(err)
+        res.setHeader('Content-Type', 'application/json');
+        res.status(404).send(JSON.stringify({user:"not found"}))
+    })
+}
+
 exports.test = function(req,res,next){
     res.status(200).send("Hello")
 }

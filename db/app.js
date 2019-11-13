@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const Joi = require('joi');
-require('dotenv').config();
+const cors = require('cors')
+// require('dotenv').config();
 /*
     400 = Bad Request
     200 = Okay
@@ -21,10 +22,12 @@ const port = process.env.PORT || 3000;
 // engine
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
+app.use(cors({origin:'*'}));
 
 // user router
 user.router.get('/login/:user_id',user.getUser);
-user.router.get('/test',user.test)
+user.router.get('/friends/:user_id',user.getAllUserExcept);
+user.router.get('/test',user.test);
 user.router.post('/register',user.postUser);
 
 // events router
@@ -32,7 +35,8 @@ events.router.get('/:user_id',events.getEvents)
 events.router.post('/insert',events.postEvents)
 
 // busytime router
-busytime.router.get('/:user_id',busytime.getBusyTime)
+busytime.router.get('/user/:user_id',busytime.getBusyTime)
+busytime.router.get('/participants/:event_id',busytime.getParticipantsBusyTime)
 busytime.router.post('/insert',busytime.postBusyTime)
 
 // invitees router

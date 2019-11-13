@@ -19,6 +19,24 @@ exports.getBusyTime = function(req,res,next){
     })
 }
 
+exports.getParticipantsBusyTime = function(req,res,next){
+    // get participant details based on event_id
+    const event_id = req.params.event_id
+    const sqlCommand = `select u.username,bt.user_id, bt.date_from, bt.date_to, i.priority from busytime bt
+    left join invitees i on i.event_id = ${event_id} and i.interest = 1
+    left join users u on u.user_id = bt.user_id
+    where bt.user_id = i.user_id`
+    init.pool.query(sqlCommand,(err,rs)=>{
+        if (err){
+            console.log(err.sqlMessage)
+            res.status(404).send("Failed to retrieve data")
+        }
+        // json object with user_id, priority
+        rs = reformat(rs)
+        res.status(200).send(rs)
+    })
+}
+
 exports.postBusyTime = function(req,res,next){
     const data = req.body
     console.log(data)
@@ -34,6 +52,32 @@ exports.postBusyTime = function(req,res,next){
         }
         res.status(200).send(rs)
     })
+}
+
+function reformat(obj){
+    if (!obj.length) return;
+    // json object with user_id, priority
+    let result = []
+    let user = []
+    let new_user = {}
+    obj.forEach((data,i) => {
+        if (user.includes(data.user_id)){
+            new_user.schedule.push({start_datetime: data.date_from, end_datetime: data.date_to})
+        }
+        else{
+            if (i!=0) result.push(new_user)
+            user.push(data.user_id)
+            new_user = {}
+            new_user.user_id = data.user_id
+            new_user.username = data.username
+            new_user.priority = data.priority
+            new_user.schedule = []
+            new_user.schedule.push({start_datetime: data.date_from, end_datetime: data.date_to})
+        }
+        if (i==obj.length-1)
+            result.push(new_user)
+    });
+    return result;
 }
 var _getData = function (params, cond) {
     return common.getGenericData('busytime', SQLconfig.busy_table, params, cond);
