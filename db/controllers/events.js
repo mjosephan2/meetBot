@@ -5,7 +5,9 @@ var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 exports.getEvents = function (req, res, next) {
+    // get events created by a certain user
     var cond = "user_id = '" + req.params.user_id + "'";
+    console.log(req.query)
     cond+=common.addQueryCond(req.query)
     console.log(cond)
     _getData("*", cond)
@@ -19,6 +21,9 @@ exports.getEvents = function (req, res, next) {
     })
 };
 
+exports.getInvitedEvents = function(req,res,next){
+
+}
 exports.postEvents = function(req,res, next){
     const eventdet = req.body
     console.log(eventdet)

@@ -48,7 +48,7 @@ exports.insertArrayToArray = (array,array2) => {
 }
 
 exports.addQueryCond = (obj)=>{
-    if (obj){
+    if (Object.keys(obj).length){
         var str = []
         Object.entries(obj).forEach(([k,v])=>{
             str.push(`${k}=${v}`)
@@ -56,6 +56,7 @@ exports.addQueryCond = (obj)=>{
         str = str.join(" AND ")
         return " AND " + str
     }
+    return "";
 }
 
 exports.conv1Dto2D = (arr,len)=>{
