@@ -22,7 +22,19 @@ exports.getEvents = function (req, res, next) {
 };
 
 exports.getInvitedEvents = function(req,res,next){
-
+    // get events created by a certain user
+    const user_id = req.params.user_id
+    const mySQLCommand = `select e.* from events e
+    left join invitees i on i.user_id = ${user_id}
+    where i.event_id = e.event_id`
+    init.pool.query(mySQLCommand,(err,rs)=>{
+        if (err){
+            console.log(err.sqlMessage)
+            res.setHeader('Content-Type', 'application/json');
+            res.status(404).send(JSON.stringify({events:"not found"}))
+        }
+        res.status(200).send(rs);
+    })
 }
 exports.postEvents = function(req,res, next){
     const eventdet = req.body
@@ -41,9 +53,9 @@ exports.putUpdateEvents = function(req,res,next){
     // add constrain later, e.g cannot change event_id and etc
     // event_id:"",data:{}
     console.log(req.body)
-    const event_id = req.body.user_id;
+    const event_id = req.body.event_id;
     const values = req.body.data;
-    var sqlCommand = "UPDATE invitees SET ? WHERE event_id=?"
+    var sqlCommand = "UPDATE events SET ? WHERE event_id=?"
     init.pool.query(sqlCommand,[values,event_id],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
