@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const Joi = require('joi');
 const cors = require('cors')
-require('dotenv').config();
+// require('dotenv').config();
 /*
     400 = Bad Request
     200 = Okay

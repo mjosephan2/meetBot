@@ -21,7 +21,7 @@ exports.getEventAllPolls = function(req,res,next){
 }
 
 exports.getAllVotedParticipant = function(req,res,next){
-    
+    // get all voted based on
 }
 exports.getParticipantAllPolls =  function(req,res,next){
     // get all available pool for event that the user is attending and is not over if any
