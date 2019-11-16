@@ -32,8 +32,9 @@ user.router.post('/register',user.postUser);
 // events router
 events.router.get('/organized/:user_id',events.getEvents);
 events.router.get('/invited/:user_id', events.getInvitedEvents);
+events.router.get('/confirm/:user_id',events.getConfrimedEvents);
 events.router.post('/insert',events.postEvents);
-events.router.put('/put',events.putUpdateEvents)
+events.router.put('/put',events.putUpdateEvents);
 
 // busytime router
 busytime.router.get('/user/:user_id',busytime.getBusyTime);
@@ -47,7 +48,8 @@ invitees.router.put('/put',invitees.putUpdateInvitees);
 
 // poll router
 poll.router.get('/organizer/:event_id',poll.getEventAllPolls)
-poll.router.get('/participant/:user_id',poll.getParticipantAllPolls)
+poll.router.get('/participant/:user_id/:event_id',poll.getPollByUserAndEvent)
+poll.router.get('/voting/details/:event_id',poll.getAllVotedParticipant)
 poll.router.post('/date/insert',poll.postInsertPollDate);
 poll.router.post('/vote/insert',poll.postInsertVote);
 

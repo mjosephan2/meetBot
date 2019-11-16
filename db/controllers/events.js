@@ -5,8 +5,8 @@ var {SQLconfig} = require('../config/config');
 
 exports.router = express.Router();
 exports.getEvents = function (req, res, next) {
-    // get events created by a certain user
-    var cond = "user_id = '" + req.params.user_id + "'";
+    // get events created by a certain user 
+    var cond = "user_id = '" + req.params.user_id + "' and status < 3";
     console.log(req.query)
     cond+=common.addQueryCond(req.query)
     console.log(cond)
@@ -15,26 +15,50 @@ exports.getEvents = function (req, res, next) {
         res.status(200).send(data);
     })
     .catch((err)=> {
-        console.log(err)
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).send(JSON.stringify({events:"not found"}))
+        console.log(err.sqlMessage)
+        res.status(404).json({error:err.sqlMessage})
     })
 };
 
 exports.getInvitedEvents = function(req,res,next){
-    // get events created by a certain user
+    // get events invited by user that has not done
     const user_id = req.params.user_id
     const mySQLCommand = `select e.* from events e
     left join invitees i on i.user_id = ${user_id}
-    where i.event_id = e.event_id`
+    where i.event_id = e.event_id and e.status < 3`
     init.pool.query(mySQLCommand,(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
-            res.setHeader('Content-Type', 'application/json');
-            res.status(404).send(JSON.stringify({events:"not found"}))
+            res.status(500).json({error:err.sqlMessage})
         }
-        res.status(200).send(rs);
+        else if (rs.length==0){
+            res.status(404).json({error:"Events not found"})
+        }
+        else{
+            res.status(200).send(rs);
+        }
     })
+}
+
+exports.getConfrimedEvents = function(req,res,next){
+    // get all events that user organized or attended (interest = 1) that has been confirmed
+    const user_id = req.params.user_id
+    const mySQLCommand = `select e.* from events e
+    left join invitees i on i.user_id = ${user_id} and e.event_id = i.event_id and i.interest = 1
+    where (e.user_id = ${user_id} or i.user_id = ${user_id}) and e.status = 2;`
+    init.pool.query(mySQLCommand,(err,rs)=>{
+        if (err){
+            console.log(err.sqlMessage)
+            res.status(500).json({error:err.sqlMessage})
+        }
+        else if (rs.length==0){
+            res.status(404).json({error:"Events not found"})
+        }
+        else{
+            res.status(200).send(rs);
+        }
+    })
+
 }
 exports.postEvents = function(req,res, next){
     const eventdet = req.body
@@ -45,8 +69,7 @@ exports.postEvents = function(req,res, next){
     })
     .catch(function(err){
         console.log(err)
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).send(JSON.stringify({error:err.sqlMessage}))
+        res.status(500).json({error:err.sqlMessage})
     })
 }
 exports.putUpdateEvents = function(req,res,next){
@@ -59,9 +82,11 @@ exports.putUpdateEvents = function(req,res,next){
     init.pool.query(sqlCommand,[values,event_id],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
-            res.status(404).send("Failed to Update")
+            res.status(500).json({error:err.sqlMessage})
         }
-        res.status(200).send(rs)
+        else{
+            res.status(200).send(rs)
+        }
     })
 }
 var _getData = function (params, cond) {

@@ -13,9 +13,8 @@ exports.getBusyTime = function(req,res,next){
             res.status(200).send(data);
         })
         .catch((err)=>{
-            console.log(err)
-            res.setHeader('Content-Type', 'application/json');
-            res.status(404).send(JSON.stringify({busy_time:"not found"}))
+            console.log(err.sqlMessage)
+            res.status(404).json({error:err.message})
     })
 }
 
@@ -29,11 +28,16 @@ exports.getParticipantsBusyTime = function(req,res,next){
     init.pool.query(sqlCommand,(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
-            res.status(404).send("Failed to retrieve data")
+            res.status(500).json({error:err.sqlMessage})
         }
         // json object with user_id, priority
-        rs = reformat(rs)
-        res.status(200).send(rs)
+        else if (rs.length==0){
+            res.status(404).json({error:"Busytime is not found"})
+        }
+        else{
+            rs = reformat(rs)
+            res.status(200).send(rs)
+        }
     })
 }
 
@@ -48,9 +52,11 @@ exports.postBusyTime = function(req,res,next){
     init.pool.query(sqlCommand,[time],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
-            res.status(404).send("Failed to Insert")
+            res.status(500).json({error:"Failed to Insert"})
         }
-        res.status(200).send(rs)
+        else{
+            res.status(200).send(rs)
+        }
     })
 }
 

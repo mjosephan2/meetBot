@@ -15,8 +15,7 @@ exports.getInvitees = function(req,res,next){
         })
         .catch((err)=>{
             console.log(err.sqlMessage)
-            res.setHeader('Content-Type', 'application/json');
-            res.status(404).send(JSON.stringify({busy_time:"not found"}))
+            res.status(404).json({error:err.sqlMessage})
     })
 }
 
@@ -31,9 +30,11 @@ exports.postInsertInvitees = function(req,res,next){
     init.pool.query(sqlCommand,[invitation],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
-            res.status(404).send("Failed to Insert")
+            res.status(500).json({error:"Failed to Insert"})
         }
-        res.status(200).send(rs)
+        else{
+            res.status(200).send(rs)
+        }
     })
 }
 
@@ -47,9 +48,11 @@ exports.putUpdateInvitees = function(req,res,next){
     init.pool.query(sqlCommand,[values,user_id],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
-            res.status(404).send("Failed to Update")
+            res.status(500).json({error:"Failed to Update"})
         }
-        res.status(200).send(rs)
+        else{
+            res.status(200).send(rs)
+        }
     })
 }
 var _getData = function (params, cond) {

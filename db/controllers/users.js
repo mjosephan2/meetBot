@@ -13,8 +13,7 @@ exports.getUser = function (req, res, next) {
     })
         .catch((err)=> {
         console.log(err)
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).send(JSON.stringify({user:"not found"}))
+        res.status(404).json({error:err.message})
     })
 };
 
@@ -28,8 +27,7 @@ exports.postUser = function(req,res, next){
     })
     .catch(function(err){
         console.log(err)
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).send(JSON.stringify({error:err.sqlMessage}))
+        res.status(500).json({error:err.sqlMessage})
     })
 }
 
@@ -42,8 +40,7 @@ exports.getAllUserExcept = function(req,res,next){
     })
         .catch((err)=> {
         console.log(err)
-        res.setHeader('Content-Type', 'application/json');
-        res.status(404).send(JSON.stringify({user:"not found"}))
+        res.status(404).json({error:err.message})
     })
 }
 
