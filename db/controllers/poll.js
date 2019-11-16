@@ -9,7 +9,7 @@ exports.getEventAllPolls = function(req,res,next){
     // this is for the organizer
     // get all the poll and total vote based on event_id
     const event_id = req.params.event_id
-    const sqlCommand = `select pd.*, IFNULL(p.vote,0) as vote from poll_date pd
+    const sqlCommand = `select pd.*, IFNULL(p.vote,0) as total_vote from poll_date pd
     left join (select count(*) as vote, date_id from poll group by poll.date_id) p on p.date_id = pd.date_id
     where event_id = ${event_id};`
     init.pool.query(sqlCommand,(err,rs)=>{
