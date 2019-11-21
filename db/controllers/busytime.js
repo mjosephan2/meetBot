@@ -48,7 +48,8 @@ exports.postBusyTime = function(req,res,next){
     const time = data.time
     common.insertValueToArray(time,user_id)
     console.log(time)
-    var sqlCommand = "INSERT INTO busytime(user_id,date_from,date_to) VALUES ?"
+    var sqlCommand = `INSERT INTO busytime(user_id,date_from,date_to) VALUES ? 
+    ON DUPLICATE KEY UPDATE date_from = VALUES(date_from), date_to = VALUES(date_to)`
     init.pool.query(sqlCommand,[time],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
