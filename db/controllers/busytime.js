@@ -24,7 +24,11 @@ exports.getParticipantsBusyTime = function(req,res,next){
     const sqlCommand = `select u.username,bt.user_id, bt.date_from, bt.date_to, i.priority from busytime bt
     left join invitees i on i.event_id = ${event_id} and i.interest = 1
     left join users u on u.user_id = bt.user_id
-    where bt.user_id = i.user_id`
+    left join events e on e.event_id = ${event_id}
+    where bt.user_id = i.user_id and DATE(bt.date_from) BETWEEN e.date_from and e.date_to 
+    and DATE(bt.date_to) BETWEEN e.date_from and e.date_to
+    order by bt.user_id ASC`
+    console.log(event_id)
     init.pool.query(sqlCommand,(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
