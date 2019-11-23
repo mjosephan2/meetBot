@@ -26,7 +26,8 @@ exports.postInsertInvitees = function(req,res,next){
     const invitation = data.invitation
     common.insertValueToArray(invitation,event_id)
     // console.log(invitation)
-    var sqlCommand = "INSERT INTO invitees(event_id,user_id,priority) VALUES ?"
+    var sqlCommand = `INSERT INTO invitees(event_id,user_id,priority) VALUES ? 
+    ON DUPLICATE KEY UPDATE priority = VALUES(priority)`
     init.pool.query(sqlCommand,[invitation],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
@@ -39,13 +40,14 @@ exports.postInsertInvitees = function(req,res,next){
 }
 
 exports.putUpdateInvitees = function(req,res,next){
-    // user_id:"",data:{}
+    // call when one is accepting the event or refusing the event
+    // or changing the priority of the invitee priority
     // add constrain later: cannot change invite_id, user_id and event_id
     console.log(req.body)
-    const user_id = req.body.user_id;
+    const invite_id = req.body.invite_id;
     const values = req.body.data;
-    var sqlCommand = "UPDATE invitees SET ? WHERE user_id=?"
-    init.pool.query(sqlCommand,[values,user_id],(err,rs)=>{
+    var sqlCommand = "UPDATE invitees SET ? WHERE invite_id=?"
+    init.pool.query(sqlCommand,[values,invite_id],(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
             res.status(500).json({error:"Failed to Update"})
