@@ -19,7 +19,18 @@ exports.getGenericData = function (rowType, table, fieldsParam, cond) {
     });
 };
 
-exports.insertGenericData = function(rowType, table, data) {
+exports.getLastInsertID = function(id_name){
+    const sqlCommand = `SELECT LAST_INSERT_ID() as ${id_name}`
+    return new Promise(function(res,rej){
+        init.pool.query(sqlCommand, function(err,rs){
+            if (err)
+                return rej(err)
+            else
+                return res(rs)
+        })
+    })
+}
+exports. insertGenericData = function(rowType, table, data) {
     var sqlCommand = `INSERT INTO ${table} SET ?`
     console.info("sqlCommand=" + sqlCommand + data);
     return new Promise(function (resolve,reject){
