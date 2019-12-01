@@ -38,7 +38,7 @@ events.router.put('/put',events.putUpdateEvents);
 
 // busytime router
 busytime.router.get('/user/:user_id',busytime.getBusyTime);
-busytime.router.get('/participants/:event_id',busytime.getParticipantsBusyTime);
+busytime.router.get('/participants/:event_id',busytime.getParticipantsBusyTimeFinal);
 busytime.router.post('/insert',busytime.postBusyTime);
 
 // invitees router

@@ -45,6 +45,37 @@ exports.getParticipantsBusyTime = function(req,res,next){
     })
 }
 
+exports.getParticipantsBusyTimeFinal = function(req,res,next){
+    // get participant details based on event_id
+    const event_id = req.params.event_id
+    const sqlCommand = `select u.username,i.user_id, 
+    if(DATE(bt.date_from) BETWEEN e.date_from and e.date_to and DATE(bt.date_from) BETWEEN e.date_from and e.date_to 
+    and DATE(bt.date_to) BETWEEN e.date_from and e.date_to,bt.date_from, null) as date_from,
+    if(DATE(bt.date_from) BETWEEN e.date_from and e.date_to and DATE(bt.date_from) BETWEEN e.date_from and e.date_to 
+    and DATE(bt.date_to) BETWEEN e.date_from and e.date_to,bt.date_to, null) as date_to,
+    i.priority from invitees i
+    left join busytime bt on i.user_id=bt.user_id
+    inner join users u on u.user_id = i.user_id
+    inner join events e on e.event_id = ${event_id}
+    where i.interest=1
+    order by bt.user_id ASC`
+    console.log(event_id)
+    init.pool.query(sqlCommand,(err,rs)=>{
+        if (err){
+            console.log(err.sqlMessage)
+            res.status(500).json({error:err.sqlMessage})
+        }
+        // json object with user_id, priority
+        else if (rs.length==0){
+            res.status(404).json({error:"Busytime is not found"})
+        }
+        else{
+            rs = reformat(rs)
+            res.status(200).send(rs)
+        }
+    })
+}
+
 exports.postBusyTime = function(req,res,next){
     const data = req.body
     console.log(data)
@@ -73,7 +104,9 @@ function reformat(obj){
     let new_user = {}
     obj.forEach((data,i) => {
         if (user.includes(data.user_id)){
-            new_user.schedule.push({start_datetime: data.date_from, end_datetime: data.date_to})
+            if (data.date_from!=null && data.date_to!=null){
+                new_user.schedule.push({start_datetime: data.date_from, end_datetime: data.date_to})
+            }
         }
         else{
             if (i!=0) result.push(new_user)
@@ -83,7 +116,9 @@ function reformat(obj){
             new_user.username = data.username
             new_user.priority = data.priority
             new_user.schedule = []
-            new_user.schedule.push({start_datetime: data.date_from, end_datetime: data.date_to})
+            if (data.date_from!=null && data.date_to!=null){
+                new_user.schedule.push({start_datetime: data.date_from, end_datetime: data.date_to})
+            }
         }
         if (i==obj.length-1)
             result.push(new_user)
