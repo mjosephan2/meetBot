@@ -66,21 +66,15 @@ exports.postEvents = function(req,res, next){
     console.log(eventdet)
     common.insertGenericData('Events', SQLconfig.events_table, eventdet)
     .then(function(data){
-        common.getLastInsertID("event_id")
-            .then(rs=>{
-                console.log(rs)
-                res.status(200).json(rs[0])
-            })
-            .catch(err=>{
-                console.log(err.sqlMessage)
-                res.status(500).json({error:err.sqlMessage})
-            })
+        console.log(data)
+        res.status(200).json({event_id:data.insertId})
         })
     .catch(function(err){
         console.log(err)
         res.status(500).json({error:err.sqlMessage})
     })
 }
+
 exports.putUpdateEvents = function(req,res,next){
     // add constrain later, e.g cannot change event_id and etc
     // event_id:"",data:{}
