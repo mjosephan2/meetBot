@@ -24,7 +24,7 @@ exports.getInvitedEvents = function(req,res,next){
     // get events invited by user that has not done
     const user_id = req.params.user_id
     const mySQLCommand = `select i.invite_id, e.* from events e
-    left join invitees i on i.user_id = ${user_id} and i.event_id = e.event_id
+    inner join invitees i on i.user_id = ${user_id} and i.event_id = e.event_id
     where e.status < 2`
     init.pool.query(mySQLCommand,(err,rs)=>{
         if (err){
