@@ -6,7 +6,7 @@ var {SQLconfig} = require('../config/config');
 exports.router = express.Router();
 exports.getEvents = function (req, res, next) {
     // get events created by a certain user 
-    var cond = "user_id = '" + req.params.user_id + "' and status < 3";
+    var cond = "user_id = '" + req.params.user_id + "' and status < 2";
     console.log(req.query)
     cond+=common.addQueryCond(req.query)
     console.log(cond)
@@ -23,9 +23,9 @@ exports.getEvents = function (req, res, next) {
 exports.getInvitedEvents = function(req,res,next){
     // get events invited by user that has not done
     const user_id = req.params.user_id
-    const mySQLCommand = `select e.* from events e
-    left join invitees i on i.user_id = ${user_id}
-    where i.event_id = e.event_id and e.status < 3`
+    const mySQLCommand = `select i.invite_id, e.* from events e
+    left join invitees i on i.user_id = ${user_id} and i.event_id = e.event_id
+    where e.status < 2`
     init.pool.query(mySQLCommand,(err,rs)=>{
         if (err){
             console.log(err.sqlMessage)
