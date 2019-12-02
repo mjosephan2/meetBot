@@ -57,8 +57,8 @@ exports.getParticipantsBusyTimeFinal = function(req,res,next){
     left join busytime bt on i.user_id=bt.user_id
     inner join users u on u.user_id = i.user_id
     inner join events e on e.event_id = ${event_id}
-    where i.interest=1
-    order by bt.user_id ASC`
+    where i.interest=1 and i.event_id = ${event_id}
+    order by i.user_id ASC`
     console.log(event_id)
     init.pool.query(sqlCommand,(err,rs)=>{
         if (err){
