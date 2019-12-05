@@ -58,7 +58,16 @@ exports.getParticipantsBusyTimeFinal = function(req,res,next){
     inner join users u on u.user_id = i.user_id
     inner join events e on e.event_id = ${event_id}
     where i.interest=1 and i.event_id = ${event_id}
-    order by i.user_id ASC`
+    union
+    select u.username, e.user_id,
+    if(DATE(bt.date_from) BETWEEN e.date_from and e.date_to and DATE(bt.date_from) BETWEEN e.date_from and e.date_to 
+    and DATE(bt.date_to) BETWEEN e.date_from and e.date_to,bt.date_from, null) as date_from,
+    if(DATE(bt.date_from) BETWEEN e.date_from and e.date_to and DATE(bt.date_from) BETWEEN e.date_from and e.date_to 
+    and DATE(bt.date_to) BETWEEN e.date_from and e.date_to,bt.date_to, null) as date_to
+    ,10 as priority from events e 
+    inner join busytime bt on bt.user_id = e.user_id
+    inner join users u on u.user_id = e.user_id
+    where e.event_id = ${event_id}`
     console.log(event_id)
     init.pool.query(sqlCommand,(err,rs)=>{
         if (err){
