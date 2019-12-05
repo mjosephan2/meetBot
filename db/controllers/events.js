@@ -23,7 +23,7 @@ exports.getEvents = function (req, res, next) {
 exports.getInvitedEvents = function(req,res,next){
     // get events invited by user that has not done
     const user_id = req.params.user_id
-    const mySQLCommand = `select i.invite_id, e.* from events e
+    const mySQLCommand = `select i.invite_id, i.interest, e.* from events e
     inner join invitees i on i.user_id = ${user_id} and i.event_id = e.event_id
     where e.status < 2`
     init.pool.query(mySQLCommand,(err,rs)=>{
@@ -92,6 +92,20 @@ exports.putUpdateEvents = function(req,res,next){
         }
     })
 }
+
+exports.createNewEvents = function(req,res,next){
+    // event details, invited user, busy time
+    const event = req.event;
+    const invitation = req.invitation;
+    const busytime = req.busytime;
+    init.connection.beginTransaction(function(err){
+        if (err){
+            res.status(500).json(err)
+        }
+        init.connection.query()
+    })
+}
+
 var _getData = function (params, cond) {
     return common.getGenericData('Events', SQLconfig.events_table, params, cond);
 };
